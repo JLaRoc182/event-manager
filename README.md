@@ -1,2 +1,6 @@
 # event-manager
-The Odin Project file serialization project 1
+The Odin Project
+Ruby
+File Serialization
+Project: Event-Manager
+Author:  Josh
