@@ -18,6 +18,16 @@ def clean_phonenumber(phone)
 end
 
 
+def time_targeting(reg_date)
+  my_date = Time.strptime(reg_date, "%m/%d/%y %k:%M")
+  my_date.hour
+end
+
+def day_targeting(reg_date)
+  my_date = Date.strptime(reg_date, "%m/%d/%y %k:%M")
+  my_date.strftime("%A")
+end
+
 def legislators_by_zipcode(zip)
   civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
   civic_info.key = 'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
@@ -53,6 +63,9 @@ contents = CSV.open(
 
 template_letter = File.read('form_letter.erb')
 erb_template = ERB.new template_letter
+time_array = Array.new
+day_array = Array.new
+week_days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
 contents.each do |row|
   id = row[0]
@@ -60,11 +73,26 @@ contents.each do |row|
   zipcode = clean_zipcode(row[:zipcode])
   legislators = legislators_by_zipcode(zipcode)
   p phonenumber = clean_phonenumber(row[:homephone])
-
+  time = time_targeting(row[:regdate])
+  time_array.push(time)
+  day = day_targeting(row[:regdate])
+  day_array.push(day)
 
   form_letter = erb_template.result(binding)
 
   save_thank_you_letter(id,form_letter)
 end
+
+i = 1
+for i in 1..24 do
+  p "Num replies hour #{i}: #{time_array.count(i)}"
+end
+
+week_days.each do |day|
+  p "Num replies on #{day}: #{day_array.count(day)}"
+end
+
+
+
 
 
